@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="no-referrer">
+    <title>Bilibili 助手 — 实时监控仪表盘</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+</head>
+
+<body>
+    <main class="dashboard-grid">
+        <!-- Section 1: Top Control Area -->
+        <header class="card brand-card">
+            <div class="brand">
+                <i class="ph-bold ph-monitor-play"></i>
+                <span>BILI TRACKER</span>
+            </div>
+        </header>
+
+        <section class="card search-card">
+            <div class="input-wrapper">
+                <i class="ph ph-magnifying-glass"></i>
+                <input type="text" id="bv-input" placeholder="输入视频 BV 号" autofocus>
+            </div>
+            <button id="search-btn">查询并监控</button>
+        </section>
+
+        <div id="welcome-view" class="card welcome-card">
+            <i class="ph ph-terminal-window"></i>
+            <h2>欢迎使用数据监控终端</h2>
+            <p>请输入 BV 号并点击查询，即可启动全局实时数据追踪网格。</p>
+        </div>
+
+        <!-- Hidden until search -->
+        <div id="video-preview-area" class="card video-info-card hidden">
+            <img id="video-pic" src="" alt="封面" class="video-cover">
+            <div class="video-meta">
+                <h2 id="video-title">正在加载...</h2>
+                <p id="video-owner">--</p>
+            </div>
+        </div>
+
+        <section id="config-area" class="card config-card hidden">
+            <div class="card-title">
+                <i class="ph ph-sliders"></i>
+                <h3>监控配置</h3>
+            </div>
+            <div class="config-fields">
+                <div class="field">
+                    <label>采样间隔 (秒)</label>
+                    <input type="number" id="interval-input" value="5" min="1">
+                </div>
+                <div class="field">
+                    <label>评论数目标</label>
+                    <input type="number" id="target-input" placeholder="设置目标值">
+                </div>
+            </div>
+            <div class="control-actions">
+                <button id="track-btn" class="primary-btn">开始追踪</button>
+                <button id="stop-btn" class="danger-btn hidden">停止监控</button>
+            </div>
+        </section>
+
+        <!-- Stats Grid (Internal Dashboard) -->
+        <div id="stats-dashboard" class="stats-contents hidden">
+            <div class="card metric-card marching">
+                <div class="metric-header">
+                    <i class="ph ph-chat-circle-dots"></i>
+                    <span>评论总数</span>
+                </div>
+                <div class="metric-value" id="current-reply-count">0</div>
+                <div class="sub-metric">
+                    <label>增长率</label>
+                    <span id="growth-rate">0</span><small>条/分</small>
+                </div>
+            </div>
+
+            <div class="card metric-card marching">
+                <div class="metric-header">
+                    <i class="ph ph-heart"></i>
+                    <span>点赞总数</span>
+                </div>
+                <div class="metric-value small" id="current-like-count">0</div>
+                <div class="sub-metric">
+                    <label>增长率</label>
+                    <span id="like-growth-rate">0</span><small>/分</small>
+                </div>
+            </div>
+
+            <div class="card metric-card marching">
+                <div class="metric-header">
+                    <i class="ph ph-play-circle"></i>
+                    <span>播放次数</span>
+                </div>
+                <div class="metric-value small" id="current-view-count">0</div>
+                <div class="sub-metric">
+                    <label>增长率</label>
+                    <span id="view-growth-rate">0</span><small>/分</small>
+                </div>
+            </div>
+
+            <div class="card countdown-card">
+                <div class="card-label">预计达标时间</div>
+                <div class="timer" id="target-eta">--</div>
+                <div class="date-val" id="target-date">--</div>
+            </div>
+
+            <div class="card chart-wrapper marching no-hover">
+                <div class="card-header">
+                    <div class="title">
+                        <i class="ph ph-activity"></i>
+                        <span>评论增长趋势</span>
+                    </div>
+                    <div class="chart-status"><span class="dot"></span> </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="growthChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </main>
+    <div id="toast" class="toast hidden"></div>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+
+</html>
